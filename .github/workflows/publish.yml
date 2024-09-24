@@ -1,0 +1,37 @@
+name: publish
+on: push
+
+jobs:
+  build_and_publish:
+    strategy:
+        fail-fast: false
+        matrix:
+            os: [ubuntu-20.04]
+            os-is-always-linux: [linux]
+            architecture: [x64]
+            # note on aarch64: https://github.blog/2024-06-03-arm64-on-github-actions-powering-faster-more-efficient-build-systems/
+            # tl;dr available to paying github users but not available yet to open source
+    runs-on: ["${{ matrix.os }}"]  # "${{ matrix.architecture }}"
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the image
+      run: make
+
+    # - name: Check tag matches package version
+    #   run:  |
+    #     package_ver=$(./zcripts --version | grep -Eo 'v\S+$')
+    #     if ! [[ $package_ver == $GITHUB_REF_NAME ]]; then
+    #       echo "Refusing to release because tag doesn't match --version: $GITHUB_REF_NAME != $package_ver" 1>&2
+    #       echo "(You probably need to update pyproject.toml)" 1>&2
+    #       exit 1
+    #     fi
+    #   if: startsWith(github.ref, 'refs/tags/')
+    # - name: Release
+    #   uses: softprops/action-gh-release@v2
+    #   if: startsWith(github.ref, 'refs/tags/')
+    #   with:
+    #     files: |
+    #       ./zcripts_${{ matrix.os-is-always-linux }}_${{ matrix.architecture }}
+    #       ./install-zcripts_${{ matrix.architecture }}.run
+    #       bin/install-zcripts.sh

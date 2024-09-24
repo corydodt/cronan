@@ -2,10 +2,7 @@ TAG_STUB			:= ghcr.io/corydodt/cronan
 TAG_VERSION			:= latest
 
 all:
-	buildah build -t $(TAG_STUB):$(TAG_VERSION) .
-
-build-deps:
-	sudo dnf -y install buildah
+	podman build -t $(TAG_STUB):$(TAG_VERSION) .
 
 iterate: CRONAN_TIME_EXPR:=53 19 * * *
 iterate: CRONAN_SPLAY:=1800
