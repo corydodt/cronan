@@ -1,6 +1,6 @@
 FROM alpine:3.20
 
-LABEL org.opencontainers.image.source https://github.com/corydodt/cronan
+LABEL org.opencontainers.image.source=https://github.com/corydodt/cronan
 
 ENV CRONAN_COMMAND="/bin/echo boop"
 
