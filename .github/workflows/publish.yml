@@ -39,7 +39,7 @@ jobs:
       - name: build image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: my-new-image
+          image: ghcr.io/corydodt/cronan
           tags: v1 ${{ github.sha }}
           containerfiles: |
             ./Containerfile
