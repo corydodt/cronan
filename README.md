@@ -21,8 +21,8 @@ If you require other shells or specific software, you are encouraged
 to install it in your downstream images.
 </dd>
 
-<dt>CRONAN_TIME_SPEC<dt>
-<dd>(Optional; default 1:00am UTC e.g. "0 1 * * *")
+<dt>CRONAN_TIME_SPEC</dt>
+<dd>(Optional; default "0 1 * * *" _i.e._ 1:00am UTC)
 
 A crontab-format time specification in the usual 5-field format. 
 
