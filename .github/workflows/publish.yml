@@ -49,6 +49,3 @@ jobs:
 
       - name: Push to ghcr
         run: podman push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        
-      - name: Print image url
-        run: echo "Image pushed to ${{ steps.push-to-ghcr.outputs.registry-paths }}"
