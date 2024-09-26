@@ -36,27 +36,19 @@ jobs:
           password: ${{ env.REGISTRY_PASSWORD }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
-      - name: build image
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: cronan
-          tags: v1 ${{ github.sha }}
-          containerfiles: |
-            ./Containerfile
-          build-args: |
-            ORG_OPENCONTAINERS_IMAGE_SOURCE=https://ghcr.io/corydodt/cronan
-            ORG_OPENCONTAINERS_IMAGE_DESCRIPTION=cronan smash
+      - name: build
+        run: make image
+      # - name: build image
+      #   id: build-image
+      #   uses: redhat-actions/buildah-build@v2
+      #   with:
+      #     image: cronan
+      #     tags: v1 ${{ github.sha }}
+      #     containerfiles: |
+      #       ./Containerfile
 
       - name: Push to ghcr
-        id: push-to-ghcr
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ghcr.io/corydodt
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-
+        run: podman push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        
       - name: Print image url
         run: echo "Image pushed to ${{ steps.push-to-ghcr.outputs.registry-paths }}"
