@@ -39,8 +39,5 @@ login-local: op_ghcr_io_item := ghcr.io container registry/credential
 login-local:
 	# Note: secret-read is a local command I have installed. This will not work
 	# for anyone but me.
-	secret-read "$(op_ghcr_io_item)" | $(MAKE) login
-
-print-url:
-	gh auth login --with-token
-	gh api /user/packages/container/cronan/versions
+	secret-read "$(op_ghcr_io_item)" | podman login ghcr.io -u $(TAG_ORG) --password-stdin
+	podman push $(TAG_STUB):$(TAG_VERSION)
