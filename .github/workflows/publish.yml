@@ -48,4 +48,4 @@ jobs:
       #       ./Containerfile
 
       - name: Push to ghcr
-        run: podman push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        run: podman push ghcr.io/${{ env.IMAGE_NAME }}:latest
