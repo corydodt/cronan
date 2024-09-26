@@ -6,7 +6,7 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-            os: [ubuntu-20.04]
+            os: [ubuntu-24.04]
             os-is-always-linux: [linux]
             architecture: [x64]
             # note on aarch64: https://github.blog/2024-06-03-arm64-on-github-actions-powering-faster-more-efficient-build-systems/
