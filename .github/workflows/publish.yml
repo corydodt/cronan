@@ -37,6 +37,7 @@ jobs:
           registry: ${{ env.IMAGE_REGISTRY }}
 
       - name: build image
+        id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ghcr.io/corydodt/cronan
