@@ -16,61 +16,46 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
+      REGISTRY_USER: ${{ github.actor }}
+      REGISTRY_PASSWORD: ${{ github.token }}
+      IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
     permissions:
       contents: read
       packages: write
       attestations: write
       id-token: write
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      - name: build image
+        uses: redhat-actions/buildah-build@v2
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          image: my-new-image
+          tags: v1 ${{ github.sha }}
+          containerfiles: |
+            ./Containerfile
+          build-args: |
+            ORG_OPENCONTAINERS_IMAGE_SOURCE=https://ghcr.io/corydodt/cronan
+            ORG_OPENCONTAINERS_IMAGE_DESCRIPTION=cronan smash
 
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      - name: Push to ghcr
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
         with:
-          context: .
-          file: Containerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ghcr.io/corydodt
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
 
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
-
-    # - name: Check tag matches package version
-    #   run:  |
-    #     package_ver=$(./zcripts --version | grep -Eo 'v\S+$')
-    #     if ! [[ $package_ver == $GITHUB_REF_NAME ]]; then
-    #       echo "Refusing to release because tag doesn't match --version: $GITHUB_REF_NAME != $package_ver" 1>&2
-    #       echo "(You probably need to update pyproject.toml)" 1>&2
-    #       exit 1
-    #     fi
-    #   if: startsWith(github.ref, 'refs/tags/')
-    # - name: Release
-    #   uses: softprops/action-gh-release@v2
-    #   if: startsWith(github.ref, 'refs/tags/')
-    #   with:
-    #     files: |
-    #       ./zcripts_${{ matrix.os-is-always-linux }}_${{ matrix.architecture }}
-    #       ./install-zcripts_${{ matrix.architecture }}.run
-    #       bin/install-zcripts.sh
+      - name: Print image url
+        run: echo "Image pushed to ${{ steps.push-to-ghcr.outputs.registry-paths }}"
