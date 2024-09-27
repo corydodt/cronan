@@ -27,9 +27,13 @@ iterate:
 		$(TAG_STUB):$(TAG_VERSION)
 	podman logs -f cronan
 
+push:
+	podman push $(TAG_STUB):$(TAG_VERSION)
+
 push-manual: op_ghcr_io_item := ghcr.io container registry/credential
 push-manual: image
 	# Note: secret-read is a local command I have installed. This will not work
 	# for anyone but me.
 	secret-read "$(op_ghcr_io_item)" | podman login ghcr.io -u $(TAG_ORG) --password-stdin
-	podman push $(TAG_STUB):$(TAG_VERSION)
+	$(MAKE) push
+	
