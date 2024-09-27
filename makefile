@@ -40,3 +40,7 @@ login-local:
 	# Note: secret-read is a local command I have installed. This will not work
 	# for anyone but me.
 	secret-read "$(op_ghcr_io_item)" | $(MAKE) login
+
+print-url:
+	gh auth login --with-token
+	gh api /user/packages/container/cronan/versions
