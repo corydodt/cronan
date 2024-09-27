@@ -29,23 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to ghcr.io
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-
       - name: build
         run: make image
-      # - name: build image
-      #   id: build-image
-      #   uses: redhat-actions/buildah-build@v2
-      #   with:
-      #     image: cronan
-      #     tags: v1 ${{ github.sha }}
-      #     containerfiles: |
-      #       ./Containerfile
 
       - name: Push to ghcr
-        run: make push
+        run: echo $REGISTRY_PASSWORD | podman login ghcr.io -u $REGISTRY_USERNAME --password-stdin && make push
