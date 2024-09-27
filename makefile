@@ -13,6 +13,8 @@ image:
 		-t $(TAG_STUB):$(TAG_VERSION) \
 		--annotation="org.opencontainers.image.description=$(IMAGE_DESCRIPTION)" \
 		--annotation="org.opencontainers.image.source=$(IMAGE_SOURCE)" \
+		--build-arg=ORG_OPENCONTAINERS_IMAGE_SOURCE=$(IMAGE_SOURCE)" \
+		--build-arg=ORG_OPENCONTAINERS_IMAGE_DESCRIPTION=$(IMAGE_DESCRIPTION)" \
 		.
 
 iterate: CRONAN_TIME_EXPR:=53 19 * * *
