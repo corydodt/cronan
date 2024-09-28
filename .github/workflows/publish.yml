@@ -38,4 +38,4 @@ jobs:
           make push
 
       - name: print url
-          echo $REGISTRY_PASSWORD | make print-url
+        run: echo $REGISTRY_PASSWORD | make print-url
