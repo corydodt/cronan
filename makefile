@@ -47,7 +47,7 @@ login-local:
 print-url: base_url := https://github.com/$(TAG_SLUG)/pkgs/container/$(TAG_PKG)/%s?tag=$(TAG_VERSION)
 print-url: jq_expr := .[] | select(.metadata.container.tags[] == "'$(TAG_VERSION)'") .id
 print-url:
-	gh auth login --with-token --scopes read:packages
+	gh auth login --with-token
 	pkg_version_id=$$(\
 		gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /users/$(TAG_ORG)/packages/container/$(TAG_PKG)/versions | \
 		jq '$(jq_expr)'); \
