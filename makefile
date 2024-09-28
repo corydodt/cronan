@@ -1,6 +1,8 @@
 SHELL				:= bash
 TAG_ORG				:= corydodt
-TAG_STUB			:= ghcr.io/$(TAG_ORG)/cronan
+TAG_PKG				:= cronan
+TAG_SLUG			:= $(TAG_ORG)/$(TAG_PKG)
+TAG_STUB			:= ghcr.io/$(TAG_SLUG)
 TAG_VERSION			:= latest
 IMAGE_DESCRIPTION   := Cronan the schedularian: runs a job in a container as simply as possible
 IMAGE_SOURCE        := https://github.com/corydodt/cronan
@@ -41,3 +43,12 @@ login-local:
 	# for anyone but me.
 	secret-read "$(op_ghcr_io_item)" | podman login ghcr.io -u $(TAG_ORG) --password-stdin
 	podman push $(TAG_STUB):$(TAG_VERSION)
+
+print-url: base_url := https://github.com/$(TAG_SLUG)/pkgs/container/$(TAG_PKG)/%s?tag=$(TAG_VERSION)
+print-url: jq_expr := .[] | select(.metadata.container.tags[] == "'$(TAG_VERSION)'") .id
+print-url:
+	gh auth login --scopes read:packages
+	pkg_version_id=$$(\
+		gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /users/$(TAG_ORG)/packages/container/$(TAG_PKG)/versions | \
+		jq '$(jq_expr)'); \
+	printf "$(base_url)\n" $$pkg_version_id

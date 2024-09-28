@@ -36,4 +36,6 @@ jobs:
         run: |
           echo $REGISTRY_PASSWORD | make login
           make push
+
+      - name: print url
           echo $REGISTRY_PASSWORD | make print-url
