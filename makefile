@@ -42,7 +42,6 @@ login-local:
 	# Note: secret-read is a local command I have installed. This will not work
 	# for anyone but me.
 	secret-read "$(op_ghcr_io_item)" | podman login ghcr.io -u $(TAG_ORG) --password-stdin
-	podman push $(TAG_STUB):$(TAG_VERSION)
 
 print-url: base_url := https://github.com/$(TAG_SLUG)/pkgs/container/$(TAG_PKG)/%s?tag=$(TAG_VERSION)
 print-url: jq_expr := .[] | select(.metadata.container.tags[] == "'$(TAG_VERSION)'") .id
